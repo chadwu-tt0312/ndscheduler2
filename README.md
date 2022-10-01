@@ -1,3 +1,7 @@
+# Please Note: Repository Inactive
+
+This repository is no longer actively maintained.
+
 # Nextdoor Scheduler
 
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](LICENSE.txt)
