@@ -12,7 +12,7 @@ from setuptools import setup
 
 multiprocessing
 
-PACKAGE = "ndscheduler-fork"
+PACKAGE = "ndscheduler"
 __version__ = None
 
 exec(open(os.path.join("ndscheduler", "version.py")).read())  # set __version__
@@ -29,7 +29,7 @@ class CleanHook(clean):
             if os.path.exists(path):
                 shutil.rmtree(path)
 
-        maybe_rm("ndscheduler-fork.egg-info")
+        maybe_rm("ndscheduler.egg-info")
         maybe_rm("build")
         maybe_rm(".venv")
         maybe_rm("dist")
