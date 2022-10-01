@@ -29,7 +29,7 @@ class CleanHook(clean):
             if os.path.exists(path):
                 shutil.rmtree(path)
 
-        maybe_rm("ndscheduler.egg-info")
+        maybe_rm("ndscheduler-fork.egg-info")
         maybe_rm("build")
         maybe_rm(".venv")
         maybe_rm("dist")
