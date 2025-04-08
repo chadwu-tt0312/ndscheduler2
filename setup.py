@@ -49,10 +49,17 @@ classes = """
     Programming Language :: Python
     Programming Language :: Python :: 3.6
     Programming Language :: Python :: 3.7
+    Programming Language :: Python :: 3.8
+    Programming Language :: Python :: 3.9
+    Programming Language :: Python :: 3.10
+    Programming Language :: Python :: 3.11
     Programming Language :: Python :: Implementation :: CPython
+    Programming Language :: Python :: Implementation :: PyPy
     Operating System :: OS Independent
 """
+
 classifiers = [s.strip() for s in classes.split("\n") if s]
+
 
 # -*- %%% -*-
 
@@ -72,12 +79,13 @@ setup(
     # test_suite="nose.collector",
     python_requires=">=3.6.4",
     install_requires=[
-        "APScheduler >= 3.0.0",
-        "SQLAlchemy >= 1.0.0",
-        "future >= 0.15.2",
-        "tornado >= 6",
-        "python-dateutil >= 2.2",
-        "pytz >= 2025.2",
+        "tornado>=6.4.2",
+        "SQLAlchemy>=2.0.39",
+        "apscheduler>=3.11.0",
+        "future>=0.18.3",
+        "python-dateutil>=2.8.2",
+        "pytz",
+        "requests",
         "bcrypt >= 3.1.7",  # for user authentication
         "confuse >= 1.1.0",  # for yaml config support
         # python-ldap is only required if LDAP authentication is used

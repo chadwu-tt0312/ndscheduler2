@@ -367,7 +367,7 @@ class Settings(object):
             for key, value in vars(args).items():
                 if key == key.upper() and value is not None:
                     setattr(self, key, value)
-            print("***", dir(self))
+            # print("*** Settings :", dir(self))
         else:
             # Load config from YAML file
             extra_parser = argparse.ArgumentParser(

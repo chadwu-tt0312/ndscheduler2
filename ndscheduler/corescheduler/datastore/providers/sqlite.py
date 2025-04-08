@@ -23,6 +23,10 @@ class DatastoreSqlite(base.DatastoreBase):
         return "sqlite:///" + file_path
 
     def get_time_isoformat_from_db(self, time_object):
-        date = datetime.datetime.strptime(time_object, "%Y-%m-%d %H:%M:%S.%f")
-        date = pytz.utc.localize(date)
+        if isinstance(time_object, str):
+            date = datetime.datetime.strptime(time_object, "%Y-%m-%d %H:%M:%S.%f")
+        else:
+            date = time_object
+        if date.tzinfo is None:
+            date = pytz.utc.localize(date)
         return date.isoformat()

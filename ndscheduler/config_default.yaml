@@ -25,7 +25,7 @@ JOB_MAX_INSTANCES: 3
 JOB_COALESCE: True
 JOB_MISFIRE_GRACE_SEC: 3600
 
-TIMEZONE: Asia/Taipei
+TIMEZONE: UTC
 
 # Database settings
 DATABASE_TABLENAMES:
@@ -55,6 +55,9 @@ LOGGING_LEVEL: INFO
 # Packages that contains job classes, e.g., my_scheduler.jobs
 JOB_CLASS_PACKAGES:
     - my_scheduler.jobs
+
+EXCLUDE_JOB_CLASS_PACKAGES:
+    - apns_job
 
 # Secure Cookie Hash
 SECURE_COOKIE: __TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__

@@ -6,6 +6,7 @@ import dateutil.tz
 import dateutil.parser
 from apscheduler.jobstores import sqlalchemy as sched_sqlalchemy
 from sqlalchemy import desc, select, MetaData
+from sqlalchemy.orm import Session
 
 from ndscheduler.corescheduler import constants
 from ndscheduler.corescheduler import utils
@@ -82,8 +83,10 @@ class DatastoreBase(sched_sqlalchemy.SQLAlchemyJobStore):
         """
         execution = {"eid": execution_id, "job_id": job_id, "state": state}
         execution.update(kwargs)
-        execution_insert = self.executions_table.insert().values(**execution)
-        self.engine.execute(execution_insert)
+        with Session(self.engine) as session:
+            stmt = self.executions_table.insert().values(**execution)
+            session.execute(stmt)
+            session.commit()
 
     def get_execution(self, execution_id):
         """Returns execution dict.
@@ -91,21 +94,27 @@ class DatastoreBase(sched_sqlalchemy.SQLAlchemyJobStore):
         :return: Diction for execution info.
         :rtype: dict
         """
-        selectable = select("*").where(self.executions_table.c.eid == execution_id)
-        rows = self.engine.execute(selectable)
-
-        for row in rows:
-            return self._build_execution(row)
+        with Session(self.engine) as session:
+            stmt = select(self.executions_table).where(self.executions_table.c.eid == execution_id)
+            result = session.execute(stmt)
+            row = result.first()
+            if row:
+                return self._build_execution(row)
+            return None
 
     def update_execution(self, execution_id, **kwargs):
         """Update execution in database.
         :param str execution_id: Execution id.
         :param kwargs: Keyword arguments.
         """
-        execution_update = (
-            self.executions_table.update().where(self.executions_table.c.eid == execution_id).values(**kwargs)
-        )
-        self.engine.execute(execution_update)
+        with Session(self.engine) as session:
+            stmt = (
+                self.executions_table.update()
+                .where(self.executions_table.c.eid == execution_id)
+                .values(**kwargs)
+            )
+            session.execute(stmt)
+            session.commit()
 
     def _build_execution(self, row):
         """Return job execution info from a row of scheduler_execution table.
@@ -158,28 +167,29 @@ class DatastoreBase(sched_sqlalchemy.SQLAlchemyJobStore):
         utc = dateutil.tz.gettz("UTC")
         start_time = dateutil.parser.parse(time_range_start).replace(tzinfo=utc)
         end_time = dateutil.parser.parse(time_range_end).replace(tzinfo=utc)
-        selectable = (
-            select("*")
-            .where(self.executions_table.c.scheduled_time.between(start_time, end_time))
-            .order_by(desc(self.executions_table.c.updated_time))
-        )
-
-        rows = self.engine.execute(selectable)
-
-        return_json = {"executions": [self._build_execution(row) for row in rows]}
-
-        return return_json
+        with Session(self.engine) as session:
+            stmt = (
+                select(self.executions_table)
+                .where(self.executions_table.c.scheduled_time.between(start_time, end_time))
+                .order_by(desc(self.executions_table.c.updated_time))
+            )
+            result = session.execute(stmt)
+            return_json = {"executions": [self._build_execution(row) for row in result]}
+            return return_json
 
     def _clean_executions(self):
         # set all executions in state "scheduled", "running", or "stopping" to "interrupted"
-        sql_command = (
-            self.executions_table.update()
-            .where(self.executions_table.c.state < constants.EXECUTION_STATUS_STOPPED)
-            .values(state=constants.EXECUTION_STATUS_INTERRUPTED)
-        )
-        result = self.engine.execute(sql_command)
-        if result.rowcount > 0:
-            logger.warning(f"Cleaned Executions: {result.rowcount}")
+        with Session(self.engine) as session:
+            stmt = (
+                self.executions_table.update()
+                .where(self.executions_table.c.state < constants.EXECUTION_STATUS_STOPPED)
+                .values(state=constants.EXECUTION_STATUS_INTERRUPTED)
+            )
+            result = session.execute(stmt)
+            session.commit()
+
+            if result.rowcount > 0:
+                logger.warning(f"Cleaned Executions: {result.rowcount}")
 
         return
 
@@ -191,8 +201,10 @@ class DatastoreBase(sched_sqlalchemy.SQLAlchemyJobStore):
         """
         audit_log = {"job_id": job_id, "job_name": job_name, "event": event}
         audit_log.update(kwargs)
-        log_insert = self.auditlogs_table.insert().values(**audit_log)
-        self.engine.execute(log_insert)
+        with Session(self.engine) as session:
+            stmt = self.auditlogs_table.insert().values(**audit_log)
+            session.execute(stmt)
+            session.commit()
 
     def get_audit_logs(self, time_range_start, time_range_end):
         """Returns a list of audit logs.
@@ -215,17 +227,15 @@ class DatastoreBase(sched_sqlalchemy.SQLAlchemyJobStore):
         utc = dateutil.tz.gettz("UTC")
         start_time = dateutil.parser.parse(time_range_start).replace(tzinfo=utc)
         end_time = dateutil.parser.parse(time_range_end).replace(tzinfo=utc)
-        selectable = (
-            select("*")
-            .where(self.auditlogs_table.c.created_time.between(start_time, end_time))
-            .order_by(desc(self.auditlogs_table.c.created_time))
-        )
-
-        rows = self.engine.execute(selectable)
-
-        return_json = {"logs": [self._build_audit_log(row) for row in rows]}
-
-        return return_json
+        with Session(self.engine) as session:
+            stmt = (
+                select(self.auditlogs_table)
+                .where(self.auditlogs_table.c.created_time.between(start_time, end_time))
+                .order_by(desc(self.auditlogs_table.c.created_time))
+            )
+            result = session.execute(stmt)
+            return_json = {"logs": [self._build_audit_log(row) for row in result]}
+            return return_json
 
     def _build_audit_log(self, row):
         """Return audit_log from a row of scheduler_auditlog table.

@@ -114,12 +114,10 @@ COOKIE_MAX_AGE = 1
 # To enable user authentication, modify the dict below
 # e.g. AUTH_CREDENTIALS = {'username': 'password'}
 # The pasword must be hashed using bcrypt (e.g. htpasswd -nbB userName userPassword)
-AUTH_CREDENTIALS = {
-    # "user": "$2y$11$MCw3cm9Tp.8zF/hmPILW3.1hGMtP0UV8kUevfaxrzM7JzXdoyFi6.",  # Very$ecret
-}
+AUTH_CREDENTIALS = {"user": "$2b$12$kdS48PJ4lN0AUkAPlKrSsepvmtZLhnAzbJhFTJPBIv71.Q8EvMFpi"}
 
 # List of admin users
-ADMIN_USER = []
+ADMIN_USER = ["user"]
 
 HELP_URL = "https://github.com/palto42/ndscheduler/blob/develop/README.md"
 ISSUES_URL = "https://github.com/palto42/ndscheduler/issues"
@@ -129,6 +127,7 @@ MAIL_SERVER = []
 
 # Server sender mail address
 SERVER_MAIL = ""
+ADMIN_MAIL = None
 
 # LDAP server address in the format "ldap://my.ldap.server" "ldaps://my.ldap.server"
 # Non-standard ports can be specified like "ldap://my.ldap.server:1234"

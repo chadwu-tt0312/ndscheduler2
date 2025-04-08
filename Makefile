@@ -29,6 +29,10 @@ flake8:
 	if [ ! -d ".venv" ]; then make init; fi
 	$(SOURCE_VENV) && $(FLAKE8_CHECKING)
 
-clean:
+clean2:
 	@($(SOURCE_VENV) && $(PYTHON) setup.py clean) >& /dev/null || $(PYTHON) setup.py clean
 	@echo "Done."
+
+clean:
+	$(SOURCE_VENV) && $(PIP) uninstall ndscheduler || true
+	$(PIP) install -e .

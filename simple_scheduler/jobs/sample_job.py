@@ -18,7 +18,11 @@ class AwesomeJob(job.JobBase):
             "example_arguments": '["first argument AAA", "second argument BBB"]',
         }
 
-    def run(self, argument1, argument2, *args, **kwargs):
+    def run(self, argument1=None, argument2=None, *args, **kwargs):
+        # 如果參數未傳入，設定為空字串
+        argument1 = argument1 if argument1 is not None else ""
+        argument2 = argument2 if argument2 is not None else ""
+
         print("Hello from AwesomeJob! Argument1: %s, Argument2: %s" % (argument1, argument2))
         return [argument1, argument2]
 
