@@ -6,9 +6,13 @@ from ndscheduler import settings
 from ndscheduler.server.handlers import base
 from ndscheduler.version import __version__
 from getpass import getuser
-from os import uname
+import platform
 import bcrypt
 from datetime import datetime as dt
+
+
+def get_system_info():
+    return platform.uname()
 
 
 class Handler(base.BaseHandler):
@@ -18,7 +22,7 @@ class Handler(base.BaseHandler):
         "title": settings.WEBSITE_TITLE,
         "version": __version__,
         "user": getuser(),
-        "host": uname()[1],
+        "host": get_system_info().node,
         "added": False,
         "message": None,
     }

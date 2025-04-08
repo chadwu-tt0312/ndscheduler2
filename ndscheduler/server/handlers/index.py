@@ -7,9 +7,14 @@ from ndscheduler import utils
 from ndscheduler.version import __version__
 from ndscheduler.server.handlers import base
 from getpass import getuser
-from os import uname
+import platform
 import pkg_resources
 import logging
+
+
+def get_system_info():
+    return platform.uname()
+
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +38,7 @@ class Handler(base.BaseHandler):
             except pkg_resources.DistributionNotFound:
                 job_versions.append(f"{job} <undefined>")
 
-        if self.current_user and type(self.current_user) == bytes:
+        if self.current_user and isinstance(self.current_user, bytes):
             admin_user = self.current_user.decode() in settings.ADMIN_USER
         else:
             admin_user = self.current_user and self.current_user in settings.ADMIN_USER
@@ -43,7 +48,7 @@ class Handler(base.BaseHandler):
             "version": __version__,
             "job_versions": ", ".join(job_versions),
             "user": getuser(),
-            "host": uname()[1],
+            "host": get_system_info().node,
             "admin_user": admin_user,  # self.current_user and self.current_user in settings.ADMIN_USER,
             "help_url": settings.HELP_URL,
             "issues_url": settings.ISSUES_URL,

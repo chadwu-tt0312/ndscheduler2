@@ -1,8 +1,8 @@
 SHELL:=/bin/bash
-PYTHON=.venv/bin/python
-PIP=.venv/bin/pip
-SOURCE_VENV=. .venv/bin/activate
-FLAKE8_CHECKING=$(SOURCE_VENV) && flake8 ndscheduler --max-line-length 120
+PYTHON=.venv/Scripts/python
+PIP=uv pip
+SOURCE_VENV=. .venv/Scripts/activate
+FLAKE8_CHECKING=$(SOURCE_VENV) && flake8 ndscheduler simple_scheduler --max-line-length 120
 
 all: test
 
@@ -19,7 +19,7 @@ test:
 	make install
 	make flake8
 	# Hacky way to ensure mock is installed before running setup.py
-	$(SOURCE_VENV) && pip install -r test_requirements.txt && $(PYTHON) setup.py test
+	$(SOURCE_VENV) && $(PIP) install -r test_requirements.txt
 
 install:
 	make init
@@ -30,5 +30,5 @@ flake8:
 	$(SOURCE_VENV) && $(FLAKE8_CHECKING)
 
 clean:
-	@($(SOURCE_VENV) && $(PYTHON) setup.py clean) >& /dev/null || python setup.py clean
+	@($(SOURCE_VENV) && $(PYTHON) setup.py clean) >& /dev/null || $(PYTHON) setup.py clean
 	@echo "Done."

@@ -68,8 +68,8 @@ setup(
     keywords="scheduler nextdoor cron python",
     packages=find_packages(),
     include_package_data=True,
-    tests_require=["funcsigs", "mock >= 1.1.2", "nose", ],
-    test_suite="nose.collector",
+    # tests_require=["funcsigs", "mock >= 1.1.2", "nose", ],
+    # test_suite="nose.collector",
     python_requires=">=3.6.4",
     install_requires=[
         "APScheduler >= 3.0.0",
@@ -77,6 +77,7 @@ setup(
         "future >= 0.15.2",
         "tornado >= 6",
         "python-dateutil >= 2.2",
+        "pytz >= 2025.2",
         "bcrypt >= 3.1.7",  # for user authentication
         "confuse >= 1.1.0",  # for yaml config support
         # python-ldap is only required if LDAP authentication is used

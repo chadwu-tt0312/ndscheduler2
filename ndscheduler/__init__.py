@@ -43,21 +43,24 @@ def setup_package():
     _settings_module = environ.get(ENVIRONMENT_VARIABLE)
     environ[ENVIRONMENT_VARIABLE] = "ndscheduler.default_settings_test"
     # Re-initialize settings
-    global settings
+    settings
     settings.__init__()
 
 
 def teardown_package():
-    global _settings_module
+    _settings_module
     if _settings_module:
         environ[ENVIRONMENT_VARIABLE] = _settings_module
     # Re-initialize settings
-    global settings
+    settings
     settings.__init__()
 
 
 def get_cli_args():
-    parser = argparse.ArgumentParser(description="NDscheduler - web based cron replacement", add_help=False,)
+    parser = argparse.ArgumentParser(
+        description="NDscheduler - web based cron replacement",
+        add_help=False,
+    )
     parser.add_argument(
         "--http-port",
         "-p",
@@ -68,7 +71,11 @@ def get_cli_args():
         choices=range(80, 65535),
     )
     parser.add_argument(
-        "--http-address", "-a", dest="HTTP_ADDRESS", help="web server IP address", type=str,
+        "--http-address",
+        "-a",
+        dest="HTTP_ADDRESS",
+        help="web server IP address",
+        type=str,
     )
     parser.add_argument(
         "--nd-settings",
@@ -78,13 +85,23 @@ def get_cli_args():
         type=str,
     )
     parser.add_argument(
-        "--debug", dest="DEBUG", action="store_true", help="enable debug mode",
+        "--debug",
+        dest="DEBUG",
+        action="store_true",
+        help="enable debug mode",
     )
     parser.add_argument(
-        "--logging-level", "-l", dest="LOGGING_LEVEL", help="logging level", type=str,
+        "--logging-level",
+        "-l",
+        dest="LOGGING_LEVEL",
+        help="logging level",
+        type=str,
     )
     parser.add_argument(
-        "--encrypt", "-e", help="Create hash value from password for use in AUTH_CREDENTIALS.", action="store_true",
+        "--encrypt",
+        "-e",
+        help="Create hash value from password for use in AUTH_CREDENTIALS.",
+        action="store_true",
     )
     parser.add_argument(
         "--version",
@@ -132,7 +149,11 @@ def get_cli_args():
 
 
 def load_yaml_config(
-    config_file=None, args=None, yaml_extras={}, app_name="ndscheduler", default_config=__name__,
+    config_file=None,
+    args=None,
+    yaml_extras={},
+    app_name="ndscheduler",
+    default_config=__name__,
 ):
     # Load config values from YAML file
 
@@ -161,7 +182,14 @@ def load_yaml_config(
             "auditlogs_tablename": confuse.String(default="scheduler_jobauditlog"),
         },
         # SQLite
-        "DATABASE_CLASS": confuse.Choice(["sqlite", "postgres", "mysql", ], default="sqlite",),
+        "DATABASE_CLASS": confuse.Choice(
+            [
+                "sqlite",
+                "postgres",
+                "mysql",
+            ],
+            default="sqlite",
+        ),
         "DATABASE_CONFIG_DICT": {
             "file_path": confuse.String(default="datastore.db"),  # SQLite
             # additional attributes for MySQL and Postgres
@@ -174,7 +202,9 @@ def load_yaml_config(
         },  # Postgres
         # ndscheduler is based on apscheduler. Here we can customize the apscheduler's main scheduler class
         # Please see ndscheduler/core/scheduler/base.py
-        "SCHEDULER_CLASS": confuse.String(default="ndscheduler.corescheduler.core.base.BaseScheduler"),
+        "SCHEDULER_CLASS": confuse.String(
+            default="ndscheduler.corescheduler.core.base.BaseScheduler"
+        ),
         "LOGGING_LEVEL": confuse.String(default="INFO"),
         # Packages that contains job classes, e.g., simple_scheduler.jobs
         "JOB_CLASS_PACKAGES": confuse.StrSeq(default=""),
@@ -197,7 +227,10 @@ def load_yaml_config(
         # LDAP server addess in the format "ldap://my.ldap.server" "ldaps://my.ldap.server"
         # Non-standard ports can be specified like "ldap://my.ldap.server:1234"
         "LDAP_SERVER": confuse.String(default=""),
-        "LDAP_REQUIRE_CERT": confuse.Choice(["demand", "allow", "never"], default="demand",),
+        "LDAP_REQUIRE_CERT": confuse.Choice(
+            ["demand", "allow", "never"],
+            default="demand",
+        ),
         "LDAP_CERT_DIR": confuse.String(default=None),
         "LDAP_CERT_FILE": confuse.String(default=None),
         # Define LDAP dn format for login, {username} will be replaced with the entered user name
@@ -215,7 +248,9 @@ def load_yaml_config(
     }
 
     yaml_config = confuse.LazyConfig(app_name, default_config)
-    logger.debug(f"Loading configuration from YAML config file, dir:{yaml_config.config_dir()}, file:{config_file}, ")
+    logger.debug(
+        f"Loading configuration from YAML config file, dir:{yaml_config.config_dir()}, file:{config_file}, "
+    )
     if config_file:
         if Path(config_file).is_file():
             yaml_config.set_file(config_file)
@@ -244,7 +279,9 @@ def load_yaml_config(
     try:
         valid = yaml_config.get(yaml_template)
     except (confuse.NotFoundError, confuse.ConfigValueError) as e:
-        logger.error(f"Value {e} in config file: {yaml_config.config_dir()}/" f"{confuse.CONFIG_FILENAME}")
+        logger.error(
+            f"Value {e} in config file: {yaml_config.config_dir()}/" f"{confuse.CONFIG_FILENAME}"
+        )
         exit(1)
 
     try:
@@ -305,14 +342,16 @@ class Settings(object):
                             setattr(self, setting, setting_value)
                 except ImportError as e:
                     error = ImportError(
-                        'Could not import settings "%s" (Is it on sys.path?): %s' % (settings_module_path, e)
+                        'Could not import settings "%s" (Is it on sys.path?): %s'
+                        % (settings_module_path, e)
                     )
                     logger.warning(error)
             except KeyError:
                 # NOTE: This is arguably an EnvironmentError, but that causes
                 # problems with Python's interactive help.
                 logger.warning(
-                    ("Environment variable %s is undefined. " "Use default settings for now.") % ENVIRONMENT_VARIABLE
+                    ("Environment variable %s is undefined. " "Use default settings for now.")
+                    % ENVIRONMENT_VARIABLE
                 )
             if settings_module and hasattr(settings_module, "extra_parser"):
                 parents = [parser, getattr(settings_module, "extra_parser")]
@@ -337,10 +376,17 @@ class Settings(object):
                 parents=[parser],
             )
             extra_parser.add_argument(
-                "--yaml-config", "-y", dest="yaml_config", help="Path to yaml config file", type=str,
+                "--yaml-config",
+                "-y",
+                dest="yaml_config",
+                help="Path to yaml config file",
+                type=str,
             )
             extra_args, _ = extra_parser.parse_known_args()
-            valid = load_yaml_config(config_file=extra_args.yaml_config, args=args,)
+            valid = load_yaml_config(
+                config_file=extra_args.yaml_config,
+                args=args,
+            )
             for key, value in valid.items():
                 setattr(self, key, value)
 
