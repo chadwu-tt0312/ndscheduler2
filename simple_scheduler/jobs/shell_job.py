@@ -16,10 +16,11 @@ class ShellJob(job.JobBase):
                 "program in order."
             ),
             "arguments": [{"type": "string", "description": "Executable path"}],
-            "example_arguments": '["/usr/local/my_program", "--file", "/tmp/abc", "--mode", "safe"]',
+            "example_arguments": '["/usr/local/my_app", "--file", "/tmp/abc", "--mode", "safe"]',
         }
 
     def run(self, *args, **kwargs):
+        print("run shell job: %s" % (args))
         return {"returncode": call(args)}
 
 

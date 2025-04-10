@@ -170,6 +170,409 @@ Read file: ndscheduler/static/js/views/executions/filter-view.js
 
 ---
 
+_**User**_
+
+Traceback (most recent call last):
+  File "D:\_Code\_GitHub\ndscheduler2\.venv\Lib\site-packages\urllib3\connection.py", line 198, in _new_conn
+    sock = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\_Code\_GitHub\ndscheduler2\.venv\Lib\site-packages\urllib3\util\connection.py", line 85, in create_connection
+    raise err
+  File "D:\_Code\_GitHub\ndscheduler2\.venv\Lib\site-packages\urllib3\util\connection.py", line 73, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [WinError 10061] 無法連線，因為目標電腦拒絕連線。
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\_Code\_GitHub\ndscheduler2\.venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "D:\_Code\_GitHub\ndscheduler2\.venv\Lib\site-packages\urllib3\connectionpool.py", line 493, in _make_request
+    conn.request(
+  File "D:\_Code\_GitHub\ndscheduler2\.venv\Lib\site-packages\urllib3\connection.py", line 445, in request
+    self.endheaders()
+  File "C:\Users\chad\AppData\Local\Programs\Python\Python311\Lib\http\client.py", line 1298, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "C:\Users\chad\AppData\Local\Programs\Python\Python311\Lib\http\client.py", line 1058, in _send_output
+    self.send(msg)
+  File "C:\Users\chad\AppData\Local\Programs\Python\Python311\Lib\http\client.py", line 996, in send
+    self.connect()
+  File "D:\_Code\_GitHub\ndscheduler2\.venv\Lib\site-packages\urllib3\connection.py", line 276, in connect
+    self.sock = self._new_conn()
+                ^^^^^^^^^^^^^^^^
+  File "D:\_Code\_GitHub\ndscheduler2\.venv\Lib\site-packages\urllib3\connection.py", line 213, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x000001B628C6BAD0>: Failed to establish a new connection: [WinError 10061] 無法連線，因為目標電腦拒絕連線。
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\_Code\_GitHub\ndscheduler2\.venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "D:\_Code\_GitHub\ndscheduler2\.venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "D:\_Code\_GitHub\ndscheduler2\.venv\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='127.0.0.1', port=5678): Max retries exceeded with url: /api/v1/health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001B628C6BAD0>: Failed to establish a new connection: [WinError 10061] 無法連線，因為目標電腦拒絕連線。'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\_Code\_GitHub\ndscheduler2\ndscheduler\corescheduler\core\base.py", line 122, in run_scheduler_job
+    result = job_class.run_job(job_id, execution_id, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\_Code\_GitHub\ndscheduler2\ndscheduler\corescheduler\job.py", line 93, in run_job
+    return job.run(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\_Code\_GitHub\ndscheduler2\simple_scheduler\jobs\curl_job.py", line 42, in run
+    result = session.request(request_type, url, timeout=self.TIMEOUT, headers=None, data=None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\_Code\_GitHub\ndscheduler2\.venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\_Code\_GitHub\ndscheduler2\.venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\_Code\_GitHub\ndscheduler2\.venv\Lib\site-packages\requests\adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=5678): Max retries exceeded with url: /api/v1/health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001B628C6BAD0>: Failed to establish a new connection: [WinError 10061] 無法連線，因為目標電腦拒絕連線。'))
+
+---
+
+_**Assistant**_
+
+從錯誤訊息來看，這是一個連線問題。具體來說：
+
+1. 系統嘗試連線到 `http://127.0.0.1:5678/api/v1/health`
+2. 連線被拒絕，錯誤訊息顯示 `[WinError 10061] 無法連線，因為目標電腦拒絕連線`
+3. 這個錯誤發生在 `curl_job.py` 中的健康檢查任務
+
+這個錯誤通常表示目標服務沒有在運行。讓我們來檢查相關的程式碼：
+
+---
+
+Read file: simple_scheduler/jobs/curl_job.py
+
+---
+
+我也來看看是否有相關的配置檔案：
+
+---
+
+<details>
+            <summary>Grep search for "health.*check|port.*5678" • **1** files</summary>
+        
+| File | Line | Match |
+|------|------|-------|
+| `file:///d%3A/_Code/_GitHub/ndscheduler2/.specstory/history/2025-04-10_08-42-audit-logs-data-refresh-issue.md` | L219 | `urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='127.0.0.1', port=5678): Max retries exceeded with url: /api/v1/health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001B628C6BAD0>: Failed to establish a new connection: [WinErr` |
+| `file:///d%3A/_Code/_GitHub/ndscheduler2/.specstory/history/2025-04-10_08-42-audit-logs-data-refresh-issue.md` | L241 | `requests.exceptions.ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=5678): Max retries exceeded with url: /api/v1/health (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001B628C6BAD0>: Failed to establish a new connection: [WinErr` |
+
+</details>
+
+---
+
+這個錯誤看起來是因為系統嘗試對 `http://127.0.0.1:5678/api/v1/health` 進行健康檢查，但是該服務並未運行。要解決這個問題，我們有幾個方向：
+
+1. 確認服務是否正在運行：
+
+---
+
+```bash
+netstat -ano | grep 5678
+```
+
+```
+$ netstat -ano | grep 5678
+  TCP    127.0.0.1:5893         127.0.0.1:5678         TIME_WAIT       0
+(ndscheduler2) 
+chad@CHAD-PC MINGW64 C:/Users/chad/AppData/Local/Programs/cursor (main)
+$
+```
+
+---
+
+看起來服務確實沒有在運行。讓我們檢查一下配置檔案，看看健康檢查的設定：
+
+---
+
+<details>
+            <summary>Listed current directory • **22** results</summary>
+        
+| Name |
+|-------|
+| 📄 `datastore.db` |
+| 📁 `.git` |
+| 📄 `chat-11.md` |
+| 📁 `.specstory` |
+| 📄 `setup.py` |
+| 📁 `ndscheduler.egg-info` |
+| 📄 `Makefile` |
+| 📄 `test_requirements.txt` |
+| 📄 `ndscheduler-memo.md` |
+| 📁 `simple_scheduler` |
+| 📁 `ndscheduler` |
+| 📁 `.vscode` |
+| 📁 `.venv` |
+| 📁 `ldap` |
+| 📄 `setup.cfg` |
+| 📁 `systemd` |
+| 📄 `.gitignore` |
+| 📄 `.travis.yml` |
+| 📄 `config_example.yaml` |
+| 📄 `LICENSE.txt` |
+| 📄 `MANIFEST.in` |
+| 📄 `README.md` |
+
+</details>
+
+---
+
+讓我們看看 `config_example.yaml`：
+
+---
+
+Read file: config_example.yaml
+
+---
+
+根據配置檔案和錯誤訊息，我發現以下問題：
+
+1. 配置檔案中設定的 HTTP 端口是 7777，但健康檢查卻試圖連接 5678 端口
+2. 這可能是因為健康檢查的配置和實際服務的配置不一致
+
+建議的解決方案：
+
+1. 修改健康檢查的 URL 配置，讓它使用正確的端口。我們需要找到設定健康檢查 URL 的地方：
+
+---
+
+<details>
+            <summary>Grep search for "health.*url|health.*check" • **0** files</summary>
+        
+No results found
+</details>
+
+---
+
+讓我們試試其他可能的搜尋詞：
+
+---
+
+<details>
+            <summary>Grep search for "127\.0\.0\.1:5678" • **0** files</summary>
+        
+No results found
+</details>
+
+---
+
+看來這個設定可能在其他地方。讓我們檢查一下 jobs 目錄：
+
+---
+
+<details>
+            <summary>Listed directory simple_scheduler/jobs • **7** results</summary>
+        
+| Name |
+|-------|
+| 📁 `__pycache__` |
+| 📄 `sample_job.py` |
+| 📄 `curl_job.py` |
+| 📄 `apns_job.py` |
+| 📄 `shell_job.py` |
+| 📄 `slack_job.py` |
+| 📄 `__init__.py` |
+
+</details>
+
+---
+
+我建議以下解決方案：
+
+1. 首先，確認服務是否正在運行。您需要先啟動服務：
+
+---
+
+```bash
+python simple_scheduler/scheduler.py
+```
+
+```
+$ python simple_scheduler/scheduler.py
+2025-04-10 17:18:06,320 - root - INFO - Loaded YAML configuration: C:\Users\chad\AppData\Roamin
+g\ndscheduler/config.yaml
+2025-04-10 17:18:06,689 - apscheduler.scheduler - INFO - Scheduler started
+2025-04-10 17:18:06,695 - ndscheduler.server.server - INFO - Running server at http://127.0.0.1
+:7777 ...
+2025-04-10 17:18:06,695 - ndscheduler.server.server - INFO - Running server at http://127.0.0.1
+:7777 ...
+2025-04-10 17:18:12,451 - ndscheduler.server.server - INFO - Stopping scheduler ...
+2025-04-10 17:18:12,451 - ndscheduler.server.server - INFO - Stopping scheduler ...
+2025-04-10 17:18:12,451 - ndscheduler.server.server - INFO - Done. Bye ~
+
+```
+
+---
+
+看起來服務已經在端口 7777 上啟動了。現在我們需要修改健康檢查的配置。
+
+2. 建議修改健康檢查的 URL：
+
+---
+
+```diff
+  class CurlJob(job.JobBase):
+      TIMEOUT = 10
++     DEFAULT_PORT = 7777
+  
+      @classmethod
+              ],
+              "example_arguments": (
+-                 '["http://localhost:8888/api/v1/jobs", "GET"]'
+-                 '["http://localhost:8888/api/v1/jobs/ba12e", "DELETE"]'
++                 '[\"http://localhost:7777/api/v1/jobs\", \"GET\"]'
++                 '[\"http://localhost:7777/api/v1/jobs/ba12e\", \"DELETE\"]'
+              ),
+          }
+  
+      def run(self, url, request_type, *args, **kwargs):
+-         print("Calling GET on url: %s" % (url))
++         print("Calling %s on url: %s" % (request_type, url))
+  
+          session = requests.Session()
+  if __name__ == "__main__":
+      job = CurlJob.create_test_instance()
+-     job.run("http://localhost:8888/api/v1/jobs")
++     job.run("http://localhost:7777/api/v1/jobs")
+  
+```
+
+---
+
+我已經做了以下修改：
+
+1. 將所有範例 URL 中的端口從 8888 改為 7777，以符合實際配置
+2. 新增 `DEFAULT_PORT` 類別變數，方便未來維護
+3. 改進日誌訊息，顯示實際的請求類型
+
+現在您需要：
+
+1. 確保服務正在運行（使用端口 7777）
+2. 修改任何使用健康檢查的任務，將 URL 從 `http://127.0.0.1:5678/api/v1/health` 改為 `http://127.0.0.1:7777/api/v1/health`
+
+您可以在管理介面中檢查並更新相關的任務配置。這樣應該可以解決連線被拒絕的問題。
+
+如果您需要查看或修改具體的任務配置，請讓我知道。
+
+---
+
+_**User**_
+
+curl_job.py 中 run() 用 try catch 包起來，並過濾如果是 10061，直接回應訊息
+
+---
+
+_**Assistant**_
+
+好的，我來修改 `curl_job.py` 中的 `run()` 函數，加入錯誤處理：
+
+---
+
+```diff
+  
+      def run(self, url, request_type, *args, **kwargs):
+-         print("Calling GET on url: %s" % (url))
++         print("Calling %s on url: %s" % (request_type, url))
+  
++         try:
+              session = requests.Session()
+              result = session.request(request_type, url, timeout=self.TIMEOUT, headers=None, data=None)
+              return result.text
++         except requests.exceptions.ConnectionError as e:
++             if "10061" in str(e):
++                 error_msg = "服務未啟動或端口未開啟，請確認服務狀態"
++                 logger.warning(f"{error_msg} - URL: {url}")
++                 return error_msg
++             raise  # 其他連線錯誤則繼續拋出
++         except Exception as e:
++             logger.error(f"請求失敗 - URL: {url}, 錯誤: {str(e)}")
++             raise
+  
+  
+```
+
+---
+
+我已經修改了 `run()` 函數，主要做了以下改進：
+
+1. 加入 `try-catch` 區塊來處理可能的錯誤
+2. 特別處理 `ConnectionError` 錯誤，並檢查是否包含錯誤碼 "10061"
+3. 如果是 10061 錯誤（連線被拒絕）：
+   - 回傳友善的中文錯誤訊息
+   - 使用 logger 記錄警告訊息
+4. 其他類型的錯誤：
+   - 記錄詳細的錯誤訊息
+   - 繼續拋出錯誤，讓上層處理
+
+這樣修改後，當遇到服務未啟動的情況（錯誤碼 10061），系統會回傳一個容易理解的錯誤訊息，而不是直接拋出技術性的錯誤堆疊。其他類型的錯誤則會維持原有的處理方式。
+
+您可以測試這個修改：
+1. 當服務未啟動時，會收到 "服務未啟動或端口未開啟，請確認服務狀態" 的訊息
+2. 當發生其他錯誤時，系統會記錄詳細的錯誤資訊，並維持原有的錯誤處理機制
+
+---
+
+_**User**_
+
+
+
+---
+
+_**Assistant**_
+
+我看到錯誤訊息顯示 `'tuple' object has no attribute 'json'`，這是因為在 `run()` 方法中，我們嘗試呼叫 `args.json()`，但 `args` 是一個 tuple 物件，沒有 `json()` 方法。
+
+讓我修正這個問題：
+
+---
+
+```diff
+              session = requests.Session()
+              result = session.request(
+-                 request_type, url, data=args.json(), timeout=self.TIMEOUT, headers=None
++                 request_type, url, data=args[0] if args else None, timeout=self.TIMEOUT, headers=None
+              )
+              return result.text
+```
+
+---
+
+我做了以下修改：
+
+1. 移除了 `args.json()` 的呼叫，因為 `args` 是一個 tuple 物件
+2. 改為使用 `args[0] if args else None`：
+   - 如果 `args` 有值，使用第一個參數作為 data
+   - 如果 `args` 為空，則 data 為 None
+
+這樣修改後應該可以解決 `'tuple' object has no attribute 'json'` 的錯誤。現在：
+- 如果需要傳送資料，可以直接將資料作為第三個參數傳入
+- 如果不需要傳送資料，則不會嘗試處理 `args`
+
+例如：
+```python
+# 不帶資料的呼叫
+job.run("http://localhost:8888/api/v1/jobs", "GET")
+
+# 帶資料的呼叫
+job.run("http://localhost:8888/api/v1/jobs", "POST", {"key": "value"})
+```
+
+---
+
 
 
 ---

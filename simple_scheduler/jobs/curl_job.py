@@ -36,11 +36,26 @@ class CurlJob(job.JobBase):
         }
 
     def run(self, url, request_type, *args, **kwargs):
-        print("Calling GET on url: %s" % (url))
+        print("Calling %s on url: %s, data=%s" % (request_type, url, args))
+        param = args[0] if args else None
 
-        session = requests.Session()
-        result = session.request(request_type, url, timeout=self.TIMEOUT, headers=None, data=None)
-        return result.text
+        try:
+            session = requests.Session()
+            result = session.request(
+                request_type,
+                url,
+                data=param,
+                timeout=self.TIMEOUT,
+                headers=None,
+            )
+            return result.text
+        except ConnectionRefusedError:
+            error_msg = "服務未啟動或端口未開啟，請確認服務狀態"
+            logger.warning(f"{error_msg} - URL: {url}")
+            return error_msg
+        except Exception as e:
+            logger.error(f"請求失敗 - URL: {url}, 錯誤: {str(e)}")
+            raise
 
 
 if __name__ == "__main__":
