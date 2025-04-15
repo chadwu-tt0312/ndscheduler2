@@ -1,0 +1,49 @@
+{
+    "ADMIN_MAIL": null,
+    "ADMIN_USER": "user",
+    "APP_INDEX_PAGE": "index.html",
+    "AUDIT_LOGS_TABLENAME": "scheduler_jobauditlog",
+    "AUTH_CREDENTIALS": {
+        "user": "$2b$12$kdS48PJ4lN0AUkAPlKrSsepvmtZLhnAzbJhFTJPBIv71.Q8EvMFpi"
+    },
+    "COOKIE_MAX_AGE": 1,
+    "COOKIE_NAME": "user",
+    "DATABASE_CLASS": "ndscheduler.corescheduler.datastore.providers.sqlite.DatastoreSqlite",
+    "DATABASE_CONFIG_DICT": {
+        "file_path": "datastore.db"
+    },
+    "DATABASE_TABLENAMES": {
+        "jobs_tablename": "scheduler_jobs",
+        "executions_tablename": "scheduler_execution",
+        "auditlogs_tablename": "scheduler_jobauditlog"
+    },
+    "DEBUG": true,
+    "EXECUTIONS_TABLENAME": "scheduler_execution",
+    "HELP_URL": "https://github.com/palto42/ndscheduler/blob/develop/README.md",
+    "HTTP_ADDRESS": "127.0.0.1",
+    "HTTP_PORT": 8888,
+    "ISSUES_URL": "https://github.com/palto42/ndscheduler/issues",
+    "JOBS_TABLENAME": "scheduler_jobs",
+    "JOB_CLASS_EXCLUDE_PACKAGES": ["apns_job"],
+    "JOB_CLASS_PACKAGES": ["simple_scheduler.jobs"],
+    "JOB_COALESCE": true,
+    "JOB_MAX_INSTANCES": 3,
+    "JOB_MISFIRE_GRACE_SEC": 3600,
+    "LDAP_CERT_DIR": null,
+    "LDAP_LOGIN_DN": "uid={username},ou=users,dc=example,dc=com",
+    "LDAP_REQUIRE_CERT": "demand",
+    "LDAP_SERVER": "",
+    "LDAP_USERS": [],
+    "MAIL_SERVER": [],
+    "SCHEDULER_CLASS": "ndscheduler.corescheduler.core.base.BaseScheduler",
+    "SECURE_COOKIE": "__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__",
+    "SERVER_MAIL": "",
+    "SSL_CERT": null,
+    "SSL_KEY": null,
+    "STATIC_DIR_PATH": "D:\\ndscheduler2\\ndscheduler\\static",
+    "TEMPLATE_DIR_PATH": "D:\\ndscheduler2\\ndscheduler\\static",
+    "THREAD_POOL_SIZE": 4,
+    "TIMEZONE": "Asia/Taipei",
+    "TORNADO_MAX_WORKERS": 8,
+    "WEBSITE_TITLE": "Scheduler"
+}

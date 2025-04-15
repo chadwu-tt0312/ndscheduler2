@@ -34,7 +34,7 @@ def get_all_available_jobs():
     from ndscheduler.corescheduler import job
 
     results = []
-    exclude_job_class = getattr(settings, "EXCLUDE_JOB_CLASS_PACKAGES", [])
+    exclude_job_class = getattr(settings, "JOB_CLASS_EXCLUDE_PACKAGES", [])
 
     for job_class_package in settings.JOB_CLASS_PACKAGES:
         try:
@@ -53,7 +53,7 @@ def get_all_available_jobs():
                 if module_name in exclude_job_class:
                     logger.debug("Skipping excluded job class: %s" % module_name)
                     continue
-                    
+
                 job_module = importlib.import_module("%s.%s" % (job_class_package, module_name))
                 for property in dir(job_module):
                     module_property = getattr(job_module, property)

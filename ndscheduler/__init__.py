@@ -86,7 +86,8 @@ def get_cli_args():
     )
     parser.add_argument(
         "--debug",
-        dest="DEBUG",
+        "-d",
+        dest="Debug",
         action="store_true",
         help="enable debug mode",
     )
@@ -113,11 +114,11 @@ def get_cli_args():
 
     args, _ = parser.parse_known_args()
 
-    if args.DEBUG:
+    if args.Debug:
         args.LOGGING_LEVEL = "DEBUG"
 
     if args.encrypt:
-        if args.DEBUG:
+        if args.Debug:
             print()
             print("WARNING: running in debug mode, password will be shown in clear text!")
             sleep(1)
@@ -127,7 +128,7 @@ def get_cli_args():
         if password != pass_check:
             print("The passwords don't match.")
             exit(1)
-        if args.DEBUG:
+        if args.Debug:
             print(f"Password [{password}]")
         salt = bcrypt.gensalt()
         print(bcrypt.hashpw(password.encode(), salt).decode())
@@ -208,6 +209,7 @@ def load_yaml_config(
         "LOGGING_LEVEL": confuse.String(default="INFO"),
         # Packages that contains job classes, e.g., simple_scheduler.jobs
         "JOB_CLASS_PACKAGES": confuse.StrSeq(default=""),
+        "JOB_CLASS_EXCLUDE_PACKAGES": confuse.StrSeq(default="apns_job"),
         # Secure Cookie Hash
         "SECURE_COOKIE": confuse.String(default="__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__"),
         # Name of the secure cookie
